@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator de Profil Personal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #FDFBF6;
+            color: #3C3633;
+        }
+        h1, h2, h3, .font-display {
+            font-family: 'Merriweather', serif;
+        }
+        .card {
+            background-color: #FFFFFF;
+            border: 1px solid #E0E0E0;
+            box-shadow: 0 4px 12px -1px rgb(0 0 0 / 0.07), 0 2px 8px -2px rgb(0 0 0 / 0.04);
+        }
+        .btn-primary {
+            background-color: #E07A5F;
+            color: #FFFFFF;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #D46A4D;
+        }
+        .interpretation-card {
+            background-color: #fafafa;
+            border-left: 4px solid #F2CC8F;
+            padding: 1rem;
+            border-radius: 0.25rem;
+            margin-bottom: 1rem;
+        }
+        .interpretation-text {
+            font-size: 1.125rem; /* Mărit textul */
+            line-height: 1.75;  /* Spațiere mai bună între rânduri */
+            color: #3C3633;
+        }
+        .plus { border-color: #81B29A; }
+        .minus { border-color: #E07A5F; }
+        .mission-text { border-color: #3D405B; }
+        .line-text { border-color: #8E8D8A; }
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            width: 100%;
+            max-width: 300px;
+            margin: 1.5rem auto;
+            aspect-ratio: 1 / 1;
+        }
+        .matrix-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #E0E0E0;
+            border-radius: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #3C3633;
+            min-height: 60px;
+            background-color: #FDFBF6;
+            overflow: hidden;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold text-[#3C3633]">Generator de Profil Personal</h1>
+            <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Introduceți data nașterii pentru a genera o analiză detaliată bazată pe Baza de Date v4.1.</p>
+        </header>
+
+        <main>
+            <div id="input-section" class="card p-6 md:p-8 rounded-xl max-w-lg mx-auto mb-12">
+                <div class="space-y-4">
+                    <div>
+                        <label for="birthdate" class="block text-sm font-medium text-gray-700 mb-1">Data nașterii:</label>
+                        <input type="date" id="birthdate" name="birthdate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E07A5F] focus:border-[#E07A5F]" max="2999-12-31">
+                    </div>
+                    <button id="calculate-btn" class="w-full btn-primary font-bold py-3 px-4 rounded-lg text-lg">
+                        Generează Raportul
+                    </button>
+                </div>
+                 <p id="error-message" class="text-red-500 text-center mt-4 hidden"></p>
+            </div>
+
+            <div id="results-section" class="mt-12 hidden">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold">Profilul Dvs. Personal</h2>
+                    <p class="text-gray-600 mt-2">Calculat pentru data de <span id="display-date" class="font-bold"></span></p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    
+                    <div id="consciousness-card" class="card p-6 rounded-xl flex flex-col">
+                        <h3 class="text-2xl font-bold text-center mb-2">Cifra Conștiinței</h3>
+                        <div class="text-center my-4">
+                            <span id="consciousness-number" class="text-8xl font-bold text-[#E07A5F]"></span>
+                        </div>
+                        <div id="consciousness-interpretation" class="space-y-6 mt-4 flex-grow">
+                        </div>
+                    </div>
+
+                    <div id="mission-card" class="card p-6 rounded-xl flex flex-col">
+                        <h3 class="text-2xl font-bold text-center mb-2">Cifra Misiunii</h3>
+                        <div class="text-center my-4">
+                            <span id="mission-number" class="text-8xl font-bold text-[#81B29A]"></span>
+                        </div>
+                         <div id="mission-interpretation" class="space-y-6 mt-4 flex-grow">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card p-6 rounded-xl mt-8">
+                    <h3 class="text-2xl font-bold text-center mb-4">Matricea Energetică</h3>
+                    <p class="text-gray-600 text-center mb-4 text-sm">Distribuția calităților personale bazate pe cifrele din data nașterii.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                        <div>
+                            <div id="matrix-grid" class="matrix-grid"></div>
+                        </div>
+                        <div id="matrix-interpretation" class="space-y-4 mt-4 md:mt-0">
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="profession-guidance-card" class="card p-6 rounded-xl mt-8">
+                    <h3 class="text-2xl font-bold text-center mb-4">Ghidare în Profesie</h3>
+                    <p class="text-gray-600 text-center mb-6">Direcții profesionale sugerate pe baza Cifrei Conștiinței.</p>
+                    <div id="profession-guidance-content" class="text-center"></div>
+                </div>
+                
+                <div class="text-center mt-16">
+                     <button id="reset-btn" class="btn-primary font-bold py-3 px-6 rounded-lg text-lg">
+                        Calculează o altă dată
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const database = {
+            profile: {
+                '1': { plus: "Liderism, capacitatea de a conduce oamenii, dorința de a obține rezultate înalte, muncă cu dedicare totală.", minus: "Egoism, agresivitate, tendința de a-și pune propriile interese mai presus de ale altora, autoritarism.", mission: "<strong>Misiunea de Liderism:</strong> Persoana este pregătită să-și asume responsabilitatea. Conducerea nu este o povară, ci o stare naturală. Scopul misiunii este material: putere, carieră, bani.", profession: { title: "MANAGEMENT / CONDUCERE", description: "<strong>Conducere:</strong> Inspirarea și motivarea echipei.<br><strong>Management:</strong> Administrarea eficientă a resurselor.<br><strong>Strategie:</strong> Elaborarea planurilor pe termen lung." } },
+                '2': { plus: "Îndeplinirea responsabilă a sarcinilor, tact, capacitatea de a empatiza, diplomație, înțelegere.", minus: "Dualitate, îndoială, nehotărâre, tendința de a se îndoi de sine și de alții, perfecționism paralizant.", mission: "<strong>Misiunea de Psiholog și Diplomat:</strong> Un suflet creativ și un psiholog subtil. Acești oameni citesc ușor emoțiile și simt starea de spirit a celorlalți. Sunt buni diplomați, dar sunt predispuși la îndoială.", profession: { title: "CONSTRUIREA RELAȚIILOR", description: "<strong>Diplomație:</strong> Negocieri, adaptare și rezolvarea conflictelor.<br><strong>Mentorat (Trainer/Mentor):</strong> Specialist într-un domeniu care învață pe altcineva." } },
+                '3': { plus: "Orientare spre succes, gamă largă de interese, capacitatea de a preda și de a ghida, analiză, cunoaștere.", minus: "Principialitate excesivă, tendința de a fi inactiv, criticism, categorism, răceală emoțională, lene.", mission: "<strong>Misiunea de Analist și Maestru al Logicii:</strong> Analiza este superputerea lor. Înțeleg perfect detaliile și pot sistematiza ușor informațiile. Caută constant profit prin analiză.", profession: { title: "ANALIZĂ, SISTEMATIZARE, MANAGEMENT", description: "<strong>Educație:</strong> Transmiterea cunoștințelor (predare, training).<br><strong>Statistică:</strong> Colectarea, procesarea și analiza datelor.<br><strong>Mentorat / Comunicare:</strong> Teorie, metodologie." } },
+                '4': { plus: "Dorința de dreptate, abordare creativă, gândire non-standard, stabilirea de obiective clare, inovație.", minus: "Nemulțumire cronică, tendința de a distruge (relații, proiecte), insatisfacție, fraudă, iluzii.", mission: "<strong>Misiunea de Păstrător al Cunoștințelor:</strong> Caută noul, revoluționarul, tinde spre transformare. Caută relații sincere și nu acceptă înșelăciunea. Misiunea nu poate fi realizată fără onestitate.", profession: { title: "DEFINIREA ȘI STABILIREA OBIECTIVELOR", description: "<strong>Marketing:</strong> Identificarea nevoilor clienților.<br><strong>Inovație (creativitate):</strong> Căutarea soluțiilor creative.<br><strong>Transmiterea cunoștințelor:</strong> Furnizarea informațiilor." } },
+                '5': { plus: "Abilități de comunicare dezvoltate, noroc, perspicacitate în afaceri, adaptabilitate, libertate.", minus: "Instabilitate, frivolitate, tendința de a face acțiuni necugetate, lipsa logicii, inconsecvență, aventurism.", mission: "<strong>Misiunea de Comunicator și Negociator:</strong> Scopul misiunii este comunicarea logică și rece. Trebuie să învețe să negocieze, nu să lupte. Sunt buni comercianți și oameni de afaceri.", profession: { title: "IDENTIFICAREA BENEFICIILOR ȘI SCALARE", description: "<strong>Antreprenoriat:</strong> Crearea și dezvoltarea unei afaceri.<br><strong>Logistică:</strong> Planificarea fluxurilor de bunuri.<br><strong>Scalare:</strong> Extinderea afacerii.<br><strong>Servicii:</strong> Oferirea de servicii populației." } },
+                '6': { plus: "Minte ascuțită, capacitatea de a da sfaturi înțelepte, creativitate, confort, noroc în dragoste, senzualitate.", minus: "Tendința de a încălca regulile, lipsa de scrupule în mijloace, răzbunare, pretențiozitate, ilegalitate.", mission: "<strong>Misiunea de Creator:</strong> Are o lume interioară unică. Are nevoie de confort, odihnă și dragoste. Misiunea este de a aduce creativitatea în lume, nu de a rămâne în confort.", profession: { title: "CREAREA CONFORTULUI ȘI CREATIVITĂȚII", description: "<strong>Cultura corporativă (HR):</strong> Formarea atmosferei în companie.<br><strong>Crearea confortului:</strong> Proiectarea spațiilor, produselor și proceselor pentru confort maxim." } },
+                '7': { plus: "Implementare rapidă a ideilor, gândire anticriză, spiritualitate, intuiție, geniu.", minus: "Dezordine în gânduri și fapte, haos, distragere, tendința de a abandona proiecte, iluzii, criză.", mission: "<strong>Misiunea de Yoga și Depășire a Crizei:</strong> Nu există compromisuri; ori totul, ori nimic. Disciplina este esențială. Sunt creați pentru a depăși dificultățile.", profession: { title: "IMPLEMENTAREA RAPIDĂ ȘI PERFECȚIONISTĂ", description: "<strong>Expertiză în implementare rapidă:</strong> Studiere și implementare rapidă a ideilor.<br><strong>Maestru în producție:</strong> Crearea de produse unice, cu atenție la detalii." } },
+                '8': { plus: "Abilitatea de a controla, pragmatism, atenție la detalii, abordare materialistă, muncă asiduă, realism.", minus: "Suspiciune, control excesiv, neîncredere, judecată, materialism extrem, lăcomie.", mission: "<strong>Misiunea de Muncă Dedicată:</strong> Cunosc prețul efortului și nu se tem să muncească din greu. Controlul excesiv duce la consecințe negative; trebuie să manifeste mai multă diplomație.", profession: { title: "CONTROLUL PROCESELOR ȘI RESURSELOR", description: "<strong>Procese de producție / creative:</strong> Organizarea și gestionarea fabricării.<br><strong>OTK (Control Tehnic):</strong> Detectarea și eliminarea erorilor.<br><strong>Coordonare:</strong> Controlul etapelor de la idee la implementare." } },
+                '9': { plus: "Energie, spirit sportiv, mișcare rapidă înainte, caracter combativ, dinamism, compasiune.", minus: "Iritabilitate, furie, suspiciune, naivitate, nerăbdare, cruzime, fanatism.", mission: "<strong>Misiunea de Ajutor pentru Oameni (Servitute):</strong> Grijă, sprijin, slujire – este gata să ofere căldură altora, chiar și atunci când nu primește nimic în schimb. Misiune bazată pe un puternic impuls emoțional.", profession: { title: "PROMOVAREA ȘI REALIZAREA OBIECTIVELOR", description: "<strong>Promovarea produselor:</strong> Implementarea strategiilor de vânzări și marketing.<br><strong>Management de proiect:</strong> Planificare și coordonare.<br><strong>Servicii de urgență:</strong> Medicină, pompieri, poliție." } }
+            },
+            frequency: {
+                '1': { 1: "Pot lua decizii pe cont propriu.", 2: "Sunt o persoană responsabilă și pot lua decizii pe cont propriu.", 3: "Sunt o persoană puternică și perseverentă, îmi asum responsabilitatea pentru mine, pentru luarea deciziilor în situații dificile și pot să-mi asum responsabilitatea pentru alții.", 4: "Sunt o persoană distinctă, concentrată pe luarea deciziilor independente, chiar și în situații dificile cît pentru mine atât și pentru ceilalți oameni." },
+                '2': { 1: "Îi înțeleg pe ceilalți oameni și situații și sunt realist.", 2: "Înțeleg oamenii și relațiile reciproce, având un nivel bun de empatie, îi simt pe oameni și înțeleg realitatea.", 3: "Am o empatie puternică și o mare dorință de a înțelege și să construiesc relații reciproce cu oamenii." },
+                '3': { 1: "Eu pot analiza.", 2: "Am abilități în analiză și planificare neutră, studiez mult și primesc cu ușurință cunoștințele." },
+                '4': { 1: "Pot să-mi stabilesc obiective și să știu ce vreau.", 2: "Am calitatea de a stabili obiective și am priorități în viață.", 3: "Am o dorință pronunțată de autoperfecționare, de reînnoire a scopului." },
+                '5': { 1: "Am abilități de comunicare și sunt rațional.", 2: "Stabilesc cu ușurință comunicarea și știe să negocieze, am logica și vorbirea bine dezvoltată." },
+                '6': { 1: "Știu cum să creez condiții și relații confortabile.", 2: "Am o comunicare caldă cu oamenii, sunt competent în crearea și simțirea confortului atât pentru mine cât și pentru alții.", 3: "Înțeleg foarte bine confortul și pot simți asta într-o gamă largă de percepție, pot crea un confort detaliat în orice „Lux Confort”." },
+                '7': { 1: "Pot fi productiv și disciplinat, există o dorință de autocunoaștere.", 2: "Mă pot adapta rapid la munca de zi cu zi și îmi gestionez bine timpul, devin repede disciplinat și tind mereu spre dezvoltare personală, am carismă.", 3: "Destul de carismatic și energic, am o imaginație bogată pentru implementarea proiectelor fantastice." },
+                '8': { 1: "Sunt o persoană practică, lucrez pentru rezultate.", 2: "Am capacitatea de a înțelege bine situații practice din viață și să duc lucrurile la bun sfârșit.", 3: "Îmi place să lucrez și să controlez procesele, mă descurc bine cu dificultăți la serviciu în orice situație concentrat pe rezultat." },
+                '9': { 1: "Am capacitatea fizică de a acționa.", 2: "Am abilități fizice bune și pot munci din greu.", 3: "Am o dorință pronunțată de acțiune și capacități fizice „o persoană foarte rezistentă”." }
+            },
+            lines: [
+                { name: "Linia de sănătate", condition: ['1', '2', '3'], text: "Am abilitatea de autoanaliză de asemenea am capacitatea de a aplica metode eficiente de autotratament." },
+                { name: "Linie de comunicare", condition: ['1', '5', '9'], text: "Persoană sociabilă și prietenoasă, deschis la interacțiune și sincer interesat de ceilalți oameni." },
+                { name: "Linia relațiilor și bunăstării personale", condition: ['2', '5', '8'], text: "Posedă abilitățile de a construi bunăstare armonioasă și materială și relații cu oamenii." },
+                { name: "Linia succesului", condition: ['3', '5', '7'], text: "Am abilitățile necesare pentru a-mi evalua cu exactitate potențialul și am capacitatea de a utiliza corect resursele și valoarea pentru a atinge un obiectiv profesional." },
+                { name: "Linia planificării", condition: ['3', '6', '9'], text: "Am capacitatea de a acționa conform planului și de a duce proiectele la bun sfârșit." },
+                { name: "Linia înțelegerii", condition: ['4', '5', '6'], text: "(Textul pentru această linie lipsește din sursă, dar se poate adăuga ulterior)." },
+                { name: "Linia de transformare", condition: ['7', '8', '9'], text: "Am capacitatea de a mă adapta rapid la schimbare în condițiile procesului de muncă, mă descurc eficient cu sarcinile într-un mediu dinamic." },
+                { name: "Combinație 4-2", condition: ['4', '2'], text: "Am capacitatea de a aplica instantaneu cunoștințele pe care le-am dobândit și împărtășindu-le eficient cu alții imediat după ce am studiat." },
+                { name: "Combinație 4-8", condition: ['4', '8'], text: "Am abilități în utilizarea operațională a cunoștințelor dobândite în practică." },
+                { name: "Combinație 6-2", condition: ['6', '2'], text: "Am o profundă înțelegere și o înțelegere a vieții. Știu cum să mă bucur de fiecare clipă, realizez bogăția și armonia interioară." },
+                { name: "Combinație 6-8", condition: ['6', '8'], text: "Am capacitatea de a mă recupera rapid cu timp minim de odihnă." }
+            ]
+        };
+
+        const calculateBtn = document.getElementById('calculate-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const birthdateInput = document.getElementById('birthdate');
+        const resultsSection = document.getElementById('results-section');
+        const errorMessage = document.getElementById('error-message');
+
+        function reduceToSingleDigit(number) {
+            let sum = number;
+            while (sum > 9) {
+                sum = String(sum).split('').reduce((acc, digit) => acc + parseInt(digit, 10), 0);
+            }
+            return sum;
+        }
+
+        function calculateConsciousness(day) {
+            return reduceToSingleDigit(day);
+        }
+
+        function calculateMission(dateString) {
+            const digits = dateString.replace(/-/g, '').split('').map(Number);
+            const sum = digits.reduce((acc, digit) => acc + digit, 0);
+            return reduceToSingleDigit(sum);
+        }
+
+        function buildFrequencyMap(dateString) {
+            const digits = dateString.replace(/-/g, '').split('').map(Number);
+            const frequencyMap = { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0, '7': 0, '8': 0, '9': 0 };
+            digits.forEach(digit => {
+                if (digit > 0) {
+                    frequencyMap[String(digit)]++;
+                }
+            });
+            return frequencyMap;
+        }
+
+        function createInterpretationCard(title, text, typeClass = '') {
+            return `
+                <div class="interpretation-card ${typeClass}">
+                    <h4 class="font-bold text-lg mb-2">${title}</h4>
+                    <div class="interpretation-text">${text}</div>
+                </div>
+            `;
+        }
+
+        function displayResults(date) {
+            const day = date.getDate();
+            const dateStringForCalc = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`;
+            
+            const consciousness = calculateConsciousness(day);
+            const mission = calculateMission(dateStringForCalc);
+            const frequencyMap = buildFrequencyMap(dateStringForCalc);
+
+            document.getElementById('display-date').textContent = date.toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' });
+            
+            // Populate Consciousness Card
+            document.getElementById('consciousness-number').textContent = consciousness;
+            const consInterpretationDiv = document.getElementById('consciousness-interpretation');
+            const profileData = database.profile[consciousness];
+            if (profileData) {
+                consInterpretationDiv.innerHTML = `
+                    ${createInterpretationCard('Calități (Plusuri)', profileData.plus, 'plus')}
+                    ${createInterpretationCard('Provocări (Minusuri)', profileData.minus, 'minus')}
+                `;
+            }
+
+            // Populate Profession Guidance Card
+            const profGuidanceDiv = document.getElementById('profession-guidance-content');
+            if (profileData && profileData.profession) {
+                profGuidanceDiv.innerHTML = `
+                    <h4 class="font-display text-2xl font-bold">${profileData.profession.title}</h4>
+                    <p class="interpretation-text text-gray-700 mt-4 max-w-2xl mx-auto">${profileData.profession.description}</p>
+                `;
+            }
+
+
+            // Populate Mission Card
+            document.getElementById('mission-number').textContent = mission;
+            const missionInterpretationDiv = document.getElementById('mission-interpretation');
+            const missionData = database.profile[mission];
+            let missionHtml = missionData ? createInterpretationCard('Descrierea Misiunii', missionData.mission, 'mission-text') : '';
+            
+            database.lines.forEach(line => {
+                const isPresent = line.condition.every(digit => frequencyMap[digit] > 0);
+                if (isPresent) {
+                    missionHtml += createInterpretationCard(line.name, line.text, 'line-text');
+                }
+            });
+            missionInterpretationDiv.innerHTML = missionHtml || createInterpretationCard("Fără Linii Speciale", "Nu au fost identificate linii sau combinații speciale în matricea energetică.", 'line-text');
+
+            // Populate Matrix Card
+            const matrixGrid = document.getElementById('matrix-grid');
+            const matrixInterpretation = document.getElementById('matrix-interpretation');
+            matrixGrid.innerHTML = '';
+            matrixInterpretation.innerHTML = '';
+
+            const matrixOrder = [1, 4, 7, 2, 5, 8, 3, 6, 9];
+            matrixOrder.forEach(digit => {
+                const count = frequencyMap[digit] || 0;
+                const cellContent = count > 0 ? String(digit).repeat(count) : '-';
+                matrixGrid.innerHTML += `<div class="matrix-cell">${cellContent}</div>`;
+            });
+            
+            let matrixHtml = '';
+            let hasMatrixContent = false;
+            for (const digit in frequencyMap) {
+                const count = frequencyMap[digit];
+                if (count > 0) {
+                    hasMatrixContent = true;
+                    let text = '';
+                    if (database.frequency[digit]) {
+                        if (count >= 4 && database.frequency[digit][4]) text = database.frequency[digit][4];
+                        else if (count >= 3 && database.frequency[digit][3]) text = database.frequency[digit][3];
+                        else if (count >= 2 && database.frequency[digit][2]) text = database.frequency[digit][2];
+                        else if (database.frequency[digit][1]) text = database.frequency[digit][1];
+                    }
+                    if (text) {
+                        matrixHtml += createInterpretationCard(`Calitatea cifrei ${digit} (x${count})`, text);
+                    }
+                }
+            }
+            matrixInterpretation.innerHTML = hasMatrixContent ? matrixHtml : createInterpretationCard("Fără Calități Notabile", "Matricea nu conține frecvențe notabile conform bazei de date.");
+
+
+            resultsSection.classList.remove('hidden');
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        calculateBtn.addEventListener('click', () => {
+            const birthdateValue = birthdateInput.value;
+            if (!birthdateValue) {
+                errorMessage.textContent = 'Vă rugăm să selectați o dată de naștere.';
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+            errorMessage.classList.add('hidden');
+            const date = new Date(birthdateValue);
+            displayResults(date);
+        });
+        
+        resetBtn.addEventListener('click', () => {
+            resultsSection.classList.add('hidden');
+            birthdateInput.value = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+    </script>
+</body>
+</html>
