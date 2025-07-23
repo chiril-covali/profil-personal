@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analiză Personalizată</title>
+    <title>Analiza Competențelor</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Professional Neutrals -->
-    <!-- Application Structure Plan: Am proiectat o aplicație cu o singură pagină, orientată spre sarcini, cu un flux clar: 1. Introducere dată. 2. Afișare raport complet. Am structurat rezultatele în trei secțiuni tematice clare, conform solicitării: Potențial de Competențe (analiza matricei), Tipuri de Gândire (bazat pe CC) și Orientare Profesională (bazat pe CC). Această arhitectură este logică, ghidând utilizatorul de la calitățile înnăscute, la modul de gândire și apoi la aplicarea lor în carieră. -->
-    <!-- Visualization & Content Choices: Report Info: Toate tabelele din documentul de analiză -> Goal: Informare, Organizare -> Viz/Presentation: Grile și carduri HTML/CSS, tipografie clară. -> Interaction: Calcul la cerere. -> Justification: Prezentarea informațiilor în carduri și secțiuni distincte, cu titluri clare, îmbunătățește lizibilitatea și permite utilizatorului să se concentreze pe zonele de interes. Am adăugat o matrice vizuală pentru a oferi o înțelegere instantanee a distribuției energetice și a liniilor de forță. Toate textele au fost rescrise la persoana a treia pentru a oferi un raport obiectiv. -->
+    <!-- Chosen Palette: Professional Teal -->
+    <!-- Application Structure Plan: Am implementat structura solicitată: 1. Personalitate și Gândire, 2. Orientare Profesională, 3. Matricea Energetică. Această ierarhie ghidează utilizatorul de la sinele interior, la aplicarea în exterior (carieră), și în final la fundația energetică (matricea), oferind un flux narativ logic. -->
+    <!-- Visualization & Content Choices: Report Info: Baza de cunoștințe completă -> Goal: Informare, Organizare, Angajament Vizual -> Viz/Presentation: Carduri animate, pictograme Unicode pentru profesii, matrice vizuală cu linii dinamice. -> Interaction: Calcul la Enter, animație de încărcare, efecte la scroll. -> Justification: Elementele vizuale (pictograme, matricea desenată) și animațiile cresc atractivitatea și fac informațiile complexe mai ușor de asimilat, îmbunătățind experiența utilizatorului. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
@@ -42,7 +42,7 @@
             position: relative;
             width: 100%;
             max-width: 300px;
-            margin: 0 auto;
+            margin: 1rem auto;
         }
         .matrix-grid {
             display: grid;
@@ -70,25 +70,50 @@
         }
         .line {
             position: absolute;
-            background-color: rgba(238, 108, 77, 0.8);
+            background-color: rgba(238, 108, 77, 0.7);
             border-radius: 2px;
+            z-index: 10;
         }
-        .line-h-1 { top: 16.66%; left: 5%; width: 90%; height: 4px; }
-        .line-h-2 { top: 50%; left: 5%; width: 90%; height: 4px; transform: translateY(-50%); }
-        .line-h-3 { top: 83.33%; left: 5%; width: 90%; height: 4px; }
-        .line-v-1 { left: 16.66%; top: 5%; height: 90%; width: 4px; }
-        .line-v-2 { left: 50%; top: 5%; height: 90%; width: 4px; transform: translateX(-50%); }
-        .line-v-3 { left: 83.33%; top: 5%; height: 90%; width: 4px; }
-        .line-d-1 { top: 0; left: 0; width: 100%; height: 4px; transform-origin: top left; transform: rotate(45deg) scale(1.25) translate(10px, -15px); }
-        .line-d-2 { top: 0; right: 0; width: 100%; height: 4px; transform-origin: top right; transform: rotate(-45deg) scale(1.25) translate(-10px, -15px); }
+        .line-h-1 { top: 16.66%; left: 5%; width: 90%; height: 5px; }
+        .line-h-2 { top: 50%; left: 5%; width: 90%; height: 5px; transform: translateY(-50%); }
+        .line-h-3 { top: 83.33%; left: 5%; width: 90%; height: 5px; }
+        .line-v-1 { left: 16.66%; top: 5%; height: 90%; width: 5px; }
+        .line-v-2 { left: 50%; top: 5%; height: 90%; width: 5px; transform: translateX(-50%); }
+        .line-v-3 { left: 83.33%; top: 5%; height: 90%; width: 5px; }
+        .line-d-1 { top: 5%; left: 5%; width: 125%; height: 5px; transform-origin: top left; transform: rotate(45deg) translate(14px, -10px); }
+        .line-d-2 { top: 5%; right: 5%; width: 125%; height: 5px; transform-origin: top right; transform: rotate(-45deg) translate(-14px, -10px); }
+        
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #005F73;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .hidden { display: none; }
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body class="antialiased">
 
     <div class="container mx-auto p-4 md:p-8 max-w-7xl">
         <header class="text-center mb-10">
-            <h1 class="text-4xl md:text-5xl font-bold text-[#001219]">Generator de Analiză a Competențelor</h1>
-            <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Introduceți data nașterii pentru a genera o analiză detaliată a potențialului de competențe, a tipului de gândire și a orientării profesionale.</p>
+            <h1 class="text-4xl md:text-5xl font-bold text-[#001219]">Analiza Competențelor</h1>
+            <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Introduceți data nașterii pentru a primi o analiză detaliată a personalității, orientării profesionale și a matricei energetice.</p>
         </header>
 
         <main>
@@ -99,48 +124,40 @@
                         <input type="date" id="birthdate" name="birthdate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#005F73] focus:border-[#005F73]" max="2999-12-31">
                     </div>
                     <button id="calculate-btn" class="w-full btn-primary font-bold py-3 px-4 rounded-lg text-lg">
-                        Generează Analiza
+                        Analizează
                     </button>
                 </div>
                  <p id="error-message" class="text-red-500 text-center mt-4 hidden"></p>
+                 <div id="loader" class="loader hidden"></div>
             </div>
 
             <div id="results-section" class="hidden space-y-12">
                 <div class="text-center">
                     <h2 class="text-3xl font-bold">Analiză pentru data de <span id="display-date" class="text-[#005F73]"></span></h2>
-                    <p class="text-gray-600 mt-2">Cifra Conștiinței: <span id="cc-result" class="font-bold"></span></p>
+                    <div class="mt-4 text-2xl font-display">Cifra Conștiinței: <span id="cc-result" class="font-bold text-5xl text-[#005F73]"></span></div>
                 </div>
 
-                <!-- Secțiunea 1: Potențial de Competențe -->
-                <section id="competencies-section" class="card p-6 md:p-8 rounded-xl">
-                    <h3 class="text-2xl font-bold mb-6 section-title">Secțiunea 1: Potențial de Competențe</h3>
+                <div id="personality-section" class="card p-6 md:p-8 rounded-xl fade-in-section">
+                    <div id="personality-content"></div>
+                </div>
+
+                <div id="career-section" class="card p-6 md:p-8 rounded-xl fade-in-section">
+                    <div id="career-content"></div>
+                </div>
+
+                <div id="matrix-section" class="card p-6 md:p-8 rounded-xl fade-in-section">
+                    <h3 class="text-2xl font-bold mb-6 section-title">Matricea Energetică: Potențialul Calităților</h3>
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                         <div class="matrix-container">
-                            <div id="matrix-grid" class="matrix-grid">
-                                <!-- Celulele matricei vor fi generate aici -->
-                                <!-- Liniile vor fi generate aici -->
-                            </div>
+                            <div id="matrix-grid" class="matrix-grid"></div>
                         </div>
                         <div>
-                            <h4 class="text-xl font-bold mb-4">Competențe bazate pe Frecvența Cifrelor</h4>
+                            <h4 class="text-xl font-bold mb-4">Potențialul Calităților</h4>
                             <div id="frequency-competencies" class="space-y-3"></div>
-                            <h4 class="text-xl font-bold mb-4 mt-6">Linii și Combinații Speciale Activat(e)</h4>
-                            <div id="lines-competencies" class="space-y-3"></div>
+                            <div id="lines-container" class="mt-6"></div>
                         </div>
                     </div>
-                </section>
-
-                <!-- Secțiunea 2: Tipuri de Gândire și Dezvoltare -->
-                <section id="thinking-type-section" class="card p-6 md:p-8 rounded-xl">
-                    <h3 class="text-2xl font-bold mb-6 section-title">Secțiunea 2: Tipuri de Gândire și Dezvoltare</h3>
-                    <div id="thinking-type-content"></div>
-                </section>
-
-                <!-- Secțiunea 3: Orientare Profesională Detaliată -->
-                <section id="professional-guidance-section" class="card p-6 md:p-8 rounded-xl">
-                    <h3 class="text-2xl font-bold mb-6 section-title">Secțiunea 3: Orientare Profesională Detaliată</h3>
-                    <div id="professional-guidance-content"></div>
-                </section>
+                </div>
                 
                 <div class="text-center pt-4">
                      <button id="reset-btn" class="btn-primary font-bold py-3 px-6 rounded-lg text-lg">
@@ -153,7 +170,29 @@
 
     <script>
         const database = {
-            frequency: {
+            personality: {
+                '1': { title: "Strategul", abilities: ["Viziune asupra perspectivei", "Leadership", "Motivație și responsabilitate", "Inițiativă", "Planuri pe termen lung"], text: "<strong>Zile de naștere:</strong> 1, 10, 19, 28<br><strong>Autorealizarea personalității:</strong> Prin conducere și muncă autonomă.<br><strong>Strategia („Eu vreau”):</strong> Elaborarea unei strategii și implementarea acesteia.<br><br><h4 class='text-xl font-bold my-2 font-display'>Tip de gândire</h4><p>Gândire <strong>STRATEGICĂ</strong> — capacitatea de a vedea o perspectivă pe termen lung, de a formula obiective clare și de a dezvolta planuri complexe pentru atingerea acestora. Acest tip de gândire ajută la luarea în considerare a riscurilor și oportunităților, la găsirea celor mai bune soluții și la construirea unor strategii eficiente pentru o dezvoltare durabilă.</p><br><strong>Diviziune (percepție):</strong> Al meu / al altora, loial / neloial." },
+                '2': { title: "Diplomatul", abilities: ["Empatie", "Rezolvarea conflictelor", "Crearea de relații de încredere", "Adaptabilitate ridicată", "Conștiinciozitate"], text: "<strong>Zile de naștere:</strong> 2, 11, 20, 29<br><strong>Autorealizarea personalității:</strong> Prin construirea relațiilor și diplomație.<br><strong>Strategia („Eu vreau”):</strong> Să înțeleagă relațiile prin intermediul altor persoane și situații.<br><br><h4 class='text-xl font-bold my-2 font-display'>Tip de gândire</h4><p>Gândire <strong>EMPATICĂ</strong> — capacitatea de a înțelege sentimentele și gândurile altor persoane, de a stabili relații de încredere și de a ține cont de stările emoționale. Acest tip de gândire ajută la găsirea unei abordări potrivite față de oameni, la soluționarea conflictelor și la construirea unor relații armonioase în echipă și în afaceri.</p><br><strong>Diviziune (percepție):</strong> Mă înțelege / nu mă înțelege." },
+                '3': { title: "Analistul", abilities: ["Sistematizarea datelor", "Capacitatea de a face prognoze", "Analiză profundă", "Gestionarea informației", "Decizii bine argumentate"], text: "<strong>Zile de naștere:</strong> 3, 12, 21, 30<br><strong>Autorealizarea personalității:</strong> Prin mentorat.<br><strong>Strategia („Eu vreau”):</strong> Analiză, sistematizare, management.<br><br><h4 class='text-xl font-bold my-2 font-display'>Tip de gândire</h4><p>Gândire <strong>ANALITICĂ</strong> — capacitatea de a descompune informațiile în părțile lor componente, de a sistematiza datele și de a identifica legături cauză-efect. Acest tip de gândire permite anticiparea tendințelor, identificarea riscurilor ascunse și găsirea de soluții eficiente pe baza unei analize aprofundate.</p><br><strong>Diviziune (percepție):</strong> Inteligent / prost, avantajos / dezavantajos, echitabil / inechitabil (din punct de vedere legal)." },
+                '4': { title: "Inovatorul", abilities: ["Orientare spre obiective", "Capacitatea de a inspira", "Viziune asupra oportunităților", "Crearea de soluții creative", "Abilități oratorice"], text: "<strong>Zile de naștere:</strong> 4, 13, 22, 31<br><strong>Autorealizarea personalității:</strong> Prin creativitate și inovație.<br><strong>Strategia („Eu vreau”):</strong> Stabilirea obiectivelor și atingerea lor.<br><br><h4 class='text-xl font-bold my-2 font-display'>Tip de gândire</h4><p>Gândire <strong>CREATIVĂ</strong> — capacitatea de a genera concepte originale, de a utiliza abordări neconvenționale și de a implementa soluții inovatoare. Acest tip de gândire ajută la identificarea noilor oportunități, la dezvoltarea de produse unice și la adaptarea la schimbările din piață.</p><br><strong>Diviziune (percepție):</strong> Cinstit / necinstit." },
+                '5': { title: "Scalatorul", abilities: ["Scalarea proiectelor", "Identificarea valorii și utilității", "Comunicare ridicată", "Abilități de vânzare", "Logistică"], text: "<strong>Zile de naștere:</strong> 5, 14, 23<br><strong>Autorealizarea personalității:</strong> Prin inteligență tehnică.<br><strong>Strategia („Eu vreau”):</strong> Logică și acțiuni corecte, realizate în mod secvențial.<br><br><h4 class='text-xl font-bold my-2 font-display'>Tip de gândire</h4><p>Gândire <strong>LOGICĂ</strong> — capacitatea de a raționa pe baza unor reguli clare și consecvente, de a identifica tipare și de a construi concluzii logice. Acest tip de gândire ajută la optimizarea proceselor, luarea deciziilor raționale și scalarea eficientă a afacerii, extinzându-i orizonturile.</p><br><strong>Diviziune (percepție):</strong> Logic / ilogic." },
+                '6': { title: "Creatorul", abilities: ["Înțelepciune", "Crearea armoniei", "Comunicativitate", "Înțelegerea confortului", "Intuiție financiară"], text: "<strong>Zile de naștere:</strong> 6, 15, 24<br><strong>Autorealizarea personalității:</strong> Prin creativitate.<br><strong>Strategia („Eu vreau”):</strong> Confort și construirea de relații armonioase.<br><br><h4 class='text-xl font-bold my-2 font-display'>Tip de gândire</h4><p>Gândire <strong>CREATIVĂ</strong> — capacitatea de a crea, de a procesa informația prin conexiuni imaginative, senzoriale și neconvenționale. Acest tip de gândire duce la apariția de idei noi și originale, ajută la realizarea unor proiecte cu valoare estetică și inspiră pe ceilalți, aducând armonie în orice proces.</p><br><strong>Diviziune (percepție):</strong> Confortabil / inconfortabil." },
+                '7': { title: "Realizatorul", abilities: ["Intuiție", "Managementul crizelor", "Luarea rapidă a deciziilor", "Capacitate de transformare", "Carismă"], text: "<strong>Zile de naștere:</strong> 7, 16, 25<br><strong>Autorealizarea personalității:</strong> Prin disciplină (de exemplu, yoga).<br><strong>Strategia („Eu vreau”):</strong> Perfecționare și implementare rapidă.<br><br><h4 class='text-xl font-bold my-2 font-display'>Tip de gândire</h4><p>Gândire <strong>INTUITIVĂ</strong> — capacitatea de a lua decizii rapide bazate pe senzații interioare și percepție subconștientă. Acest tip de gândire permite reacții imediate la schimbări, găsirea de soluții neconvenționale în situații de incertitudine și descoperirea oportunităților ascunse.</p><br><strong>Diviziune (percepție):</strong> Spiritual / nespiritual." },
+                '8': { title: "Controlorul", abilities: ["Pragmatism", "Managementul resurselor", "Control", "Capacitate de organizare", "Meticulozitate"], text: "<strong>Zile de naștere:</strong> 8, 17, 26<br><strong>Autorealizarea personalității:</strong> Prin crearea unor structuri stabile în sfera practică.<br><strong>Strategia („Eu vreau”):</strong> Controlul lumii materiale.<br><br><h4 class='text-xl font-bold my-2 font-display'>Tip de gândire</h4><p>Gândire <strong>PRACTICĂ</strong> — capacitatea de a aplica cunoștințele și abilitățile pentru rezolvarea sarcinilor concrete și obținerea unor rezultate palpabile. Acest tip de gândire este orientat spre disciplină, administrarea resurselor și optimizarea proceselor, ceea ce permite atingerea unei eficiențe maxime.</p><br><strong>Diviziune (percepție):</strong> Bogat / sărac, eficient / ineficient." },
+                '9': { title: "Tacticianul", abilities: ["Reacție rapidă", "Promovare (rol de promotor)", "Hotărâre", "Spirit sportiv", "Lucru în echipă"], text: "<strong>Zile de naștere:</strong> 9, 18, 27<br><strong>Autorealizarea personalității:</strong> Prin acțiune și prin identificare cu o idee.<br><strong>Strategia („Eu vreau”):</strong> Ajutor și serviciu adus societății, idealism.<br><br><h4 class='text-xl font-bold my-2 font-display'>Tip de gândire</h4><p>Gândire <strong>TACTICĂ</strong> — capacitatea de a analiza rapid o situație și de a lua decizii orientate spre atingerea obiectivelor pe termen scurt. Acest tip de gândire ajută la reacții operative în fața provocărilor, adaptare rapidă la schimbări și obținerea de rezultate imediate, susținând totodată strategia generală.</p><br><strong>Diviziune (percepție):</strong> Recunoscător / nerecunoscător, echitabil / inechitabil." }
+            },
+            career: {
+                '1': { workType: "Muncă de Sistem", icon: "💼", domains: ["Management și administrare", "Economie și finanțe", "Științe politice și administrație publică", "Antreprenoriat și startup-uri", "Drept corporativ", "Drept internațional și reglementarea afacerilor", "Administrație publică și municipală", "Psihologia leadershipului", "Arta oratorică"] },
+                '2': { workType: "Muncă de Sistem", icon: "🤝", domains: ["Psihologie și psihoterapie", "Relații internaționale și diplomație", "Mediere și conflictologie", "Managementul resurselor umane (HR)", "Științe sociale și comunicare", "Istoria și critica artei", "Cultură corporativă", "Culturologie", "Lingvistică"] },
+                '3': { workType: "Muncă de Sistem", icon: "🔬", domains: ["Analiza datelor", "Analiză financiară", "Economie și statistică", "Analiza afacerilor", "Contabilitate", "Programare și IT", "Matematică", "Comportament organizațional", "Medicină și farmacologie", "Inginerie de sistem", "Robotică"] },
+                '4': { workType: "Muncă de Piață", icon: "💡", domains: ["Marketing și publicitate", "Media și comunicare", "Jurnalism", "Arte și industrii creative", "Regie și scenaristică", "Tehnologii și IT", "Antreprenoriat și inovații", "Jurisdicție și apărarea drepturilor omului"] },
+                '5': { workType: "Muncă de Piață", icon: "📈", domains: ["Afaceri și antreprenoriat", "Logistică și lanț de aprovizionare", "Programare", "Automatizare", "Relații publice (PR)", "Inginerie", "Matematică și fizică", "Modă și stil", "Drept corporativ"] },
+                '6': { workType: "Muncă de Piață", icon: "🎨", domains: ["Artă și design (arhitectură, interior, vestimentație, bijuterii)", "Finanțe și investiții", "Arte plastice", "Turism și industria hotelieră", "Management de lux", "Psihologia emoțiilor", "Imobiliare de lux"] },
+                '7': { workType: "Muncă de Piață", icon: "⚡️", domains: ["Managementul crizelor și al schimbării", "Managementul riscurilor", "Medicină alternativă și yoga", "Studii spirituale și filozofice", "Antreprenoriat inovator", "Psihologie cognitivă și neuroștiință", "R&D", "Ecologie", "Științe politice"] },
+                '8': { workType: "Muncă de Piață", icon: "⚙️", domains: ["Finanțe, credit și management (audit, contabilitate)", "Analiza investițiilor", "Managementul imobiliar", "Controlul calității și standardizare (ISO)", "Management operațional", "Industria securității", "Consultanță fiscală"] },
+                '9': { workType: "Muncă de Sistem", icon: "🎯", domains: ["Sport și cultură fizică", "Științe militare și securitate", "Medicină și chirurgie", "Reanimatologie", "Management de proiect", "Promovarea produselor și serviciilor", "Management de evenimente", "Asistență socială", "Teatru și film (actorie)"] }
+            },
+            matrixFrequency: {
                 '1': { 1: "Poate lua decizii pe cont propriu.", 2: "Este o persoană responsabilă și poate lua decizii pe cont propriu.", 3: "Este o persoană puternică și perseverentă, își asumă responsabilitatea pentru sine, pentru luarea deciziilor în situații dificile și poate să-și asume responsabilitatea pentru alții.", 4: "Este o persoană distinctă, concentrată pe luarea deciziilor independente, chiar și în situații dificile atât pentru sine, cât și pentru ceilalți oameni." },
                 '2': { 1: "Îi înțelege pe ceilalți oameni și situații și este o persoană realistă.", 2: "Înțelege oamenii și relațiile reciproce, având un nivel bun de empatie, îi simte pe oameni și înțelege realitatea.", 3: "Are o empatie puternică și o mare dorință de a înțelege și de a construi relații reciproce cu oamenii." },
                 '3': { 1: "Poate analiza.", 2: "Are abilități în analiză și planificare neutră, studiază mult și primește cu ușurință cunoștințele." },
@@ -164,41 +203,19 @@
                 '8': { 1: "Este o persoană practică, lucrează pentru rezultate.", 2: "Are capacitatea de a înțelege bine situații practice din viață și să ducă lucrurile la bun sfârșit.", 3: "Îi place să lucreze și să controleze procesele, se descurcă bine cu dificultăți la serviciu în orice situație, fiind concentrată pe rezultat." },
                 '9': { 1: "Are capacitatea fizică de a acționa.", 2: "Are abilități fizice bune și poate munci din greu.", 3: "Are o dorință pronunțată de acțiune și capacități fizice, fiind „o persoană foarte rezistentă”." }
             },
-            lines: [
-                { name: "Linia planificării", condition: ['3', '6', '9'], cssClass: "line-h-1" },
-                { name: "Linia relațiilor și bunăstării personale", condition: ['2', '5', '8'], cssClass: "line-h-2" },
-                { name: "Linia de sănătate", condition: ['3', '2', '1'], cssClass: "line-v-1" },
-                { name: "Linia înțelegerii", condition: ['6', '5', '4'], cssClass: "line-v-2" },
-                { name: "Linia de transformare", condition: ['9', '8', '7'], cssClass: "line-v-3" },
-                { name: "Linia succesului", condition: ['3', '5', '7'], cssClass: "line-d-1" },
-                { name: "Linie de comunicare", condition: ['9', '5', '1'], cssClass: "line-d-2" },
+            matrixLines: [
+                { name: "Linia planificării", condition: ['3', '6', '9'], cssClass: "line-h-1", text: "Are capacitatea de a acționa conform planului și de a duce proiectele la bun sfârșit." },
+                { name: "Linia relațiilor și bunăstării personale", condition: ['2', '5', '8'], cssClass: "line-h-2", text: "Posedă abilitățile de a construi bunăstare armonioasă și materială și relații cu oamenii." },
+                { name: "Linia de sănătate", condition: ['1', '2', '3'], cssClass: "line-v-1", text: "Are abilitatea de autoanaliză, de asemenea are capacitatea de a aplica metode eficiente de autotratament." },
+                { name: "Linia înțelegerii", condition: ['4', '5', '6'], cssClass: "line-v-2", text: "Posedă o înțelegere clară a modului în care obiectivele pot fi atinse prin comunicare logică și crearea unor condiții armonioase." },
+                { name: "Linia de transformare", condition: ['7', '8', '9'], cssClass: "line-v-3", text: "Are capacitatea de a se adapta rapid la schimbare în condițiile procesului de muncă, se descurcă eficient cu sarcinile într-un mediu dinamic." },
+                { name: "Linia succesului", condition: ['3', '5', '7'], cssClass: "line-d-1", text: "Are abilitățile necesare pentru a-și evalua cu exactitate potențialul și are capacitatea de a utiliza corect resursele și valoarea pentru a atinge un obiectiv profesional." },
+                { name: "Linie de comunicare", condition: ['1', '5', '9'], cssClass: "line-d-2", text: "Este o persoană sociabilă și prietenoasă, deschisă la interacțiune și sincer interesată de ceilalți oameni." },
                 { name: "Combinație 4-2", condition: ['4', '2'], text: "Are capacitatea de a aplica instantaneu cunoștințele pe care le-a dobândit și de a le împărtăși eficient cu alții imediat după ce le-a studiat." },
                 { name: "Combinație 4-8", condition: ['4', '8'], text: "Are abilități în utilizarea operațională a cunoștințelor dobândite în practică." },
                 { name: "Combinație 6-2", condition: ['6', '2'], text: "Are o profundă înțelegere a vieții. Știe cum să se bucure de fiecare clipă, realizează bogăția și armonia interioară." },
                 { name: "Combinație 6-8", condition: ['6', '8'], text: "Are capacitatea de a se recupera rapid cu timp minim de odihnă." }
-            ],
-            thinkingTypes: {
-                '1': { arhetip: "STRATEG (MANAGER)", tip: "Gândire STRATEGICĂ", domenii: "Management și administrare, Economie și finanțe, Științe politice și administrație publică, Antreprenoriat și startup-uri, Drept corporativ, Drept internațional și reglementarea afacerilor, Administrație publică și municipală, Psihologia leadershipului, Arta oratorică." },
-                '2': { arhetip: "DIPLOMAT (MEDIATOR)", tip: "Gândire EMPATICĂ", domenii: "Psihologie și psihoterapie (clinică și socială), Relații internaționale și diplomație, Mediere și conflictologie, Managementul resurselor umane (HR), Științe sociale și comunicare, Istoria și critica artei, Cultură corporativă, Culturologie, Lingvistică." },
-                '3': { arhetip: "ANALIST (MENTOR)", tip: "Gândire ANALITICĂ", domenii: "Analiza datelor, Analiză financiară, Economie și statistică, Analiza afacerilor, Contabilitate, Programare și IT, Matematică, Comportament organizațional și managementul personalului, Medicină, Medicină generală și farmacologie, Inginerie de sistem, Robotică, Științe și inginerie." },
-                '4': { arhetip: "INOVATOR (MARKETER)", tip: "Gândire CREATIVĂ", domenii: "Marketing și publicitate, Media și comunicare, Publicistică, Jurnalism, Arte și industrii creative, Regie și scenaristică, Tehnologii și IT, Antreprenoriat și inovații, Jurisdicție (jurisprudență și activități de apărare a drepturilor omului)." },
-                '5': { arhetip: "SCALARE (LOGISTICIAN)", tip: "Gândire LOGICĂ", domenii: "Afaceri și antreprenoriat, Logistică și managementul lanțului de aprovizionare, Programare, Tehnologii informaționale și automatizare, Relații publice (PR), Inginerie, Matematică și fizică, Modă, stil și estetică, Drept corporativ și reglementarea afacerilor." },
-                '6': { arhetip: "ETICĂ CORPORATIVĂ (CREATOR)", tip: "Gândire CREATIV-ARTISTICĂ", domenii: "Artă și design (arhitectură, interior, vestimentație, bijuterii), Finanțe și investiții, Arte plastice (pictură, sculptură), Turism și industria hotelieră, Management de lux, Psihologia emoțiilor și a relațiilor interpersonale, Imobiliare de lux și managementul proprietăților VIP." },
-                '7': { arhetip: "INOVATOR (IMPLEMENTATOR)", tip: "Gândire INTUITIVĂ", domenii: "Managementul crizelor și al schimbării, Managementul riscurilor, Medicină alternativă și yoga, Studii spirituale și filozofice, Antreprenoriat inovator, Psihologie cognitivă și neuroștiință, R&D (Cercetare și Dezvoltare), Ecologie, Științe politice, Jurisprudență." },
-                '8': { arhetip: "CONTROL (COORDONATOR)", tip: "Gândire PRACTICĂ", domenii: "Finanțe, credit și management (audit, contabilitate), Analiza investițiilor și managementul activelor, Managementul imobiliar, Controlul calității și standardizare (ISO), Management operațional, Industria securității și managementul riscurilor, Drept fiscal și consultanță fiscală." },
-                '9': { arhetip: "PROMOTOR (TACTICIAN)", tip: "Gândire TACTICĂ", domenii: "Sport și cultură fizică, Științe militare și securitate, Medicină și chirurgie, Reanimatologie, Managementul și coordonarea proiectelor, Promovarea produselor și serviciilor, Management de proiect, Management de evenimente, Asistență socială și activități comunitare, Teatru și film (actorie)." }
-            },
-            professions: {
-                '1': { title: "MANAGEMENT / CONDUCERE", description: "<strong>Conducere:</strong> Inspirarea și motivarea echipei pentru atingerea obiectivelor comune, prin delegarea sarcinilor, luarea deciziilor și asumarea responsabilității.<br><strong>Management:</strong> Administrarea organizației și gestionarea eficientă a resurselor și activităților.<br><strong>Strategie:</strong> Elaborarea planurilor pe termen lung." },
-                '2': { title: "CONSTRUIREA RELAȚIILOR", description: "<strong>Diplomație (construirea relațiilor):</strong> Negocieri, adaptare și rezolvarea conflictelor, stabilirea și menținerea contactelor.<br><strong>Mentorat (Trainer/Mentor):</strong> Un specialist într-un domeniu (care a înțeles ceva și învață pe altcineva)." },
-                '3': { title: "ANALIZĂ, SISTEMATIZARE, MANAGEMENT", description: "<strong>Educație / Activitate educațională:</strong> Procesul de transmitere a cunoștințelor. Include predarea, trainingul, crearea materialelor didactice și organizarea programelor educaționale.<br><strong>Statistică:</strong> Activitate axată pe colectarea, procesarea, analiza și interpretarea datelor.<br><strong>Mentorat / Comunicare:</strong> Teorie, metodologie." },
-                '4': { title: "DEFINIREA ȘI STABILIREA OBIECTIVELOR", description: "<strong>Marketing:</strong> Identificarea nevoilor și intereselor clienților, crearea unei oferte valoroase.<br><strong>Inovație (creativitate):</strong> Căutarea constantă a soluțiilor creative (neconvenționale).<br><strong>Transmiterea cunoștințelor (informației):</strong> Furnizarea informațiilor în orice formă." },
-                '5': { title: "IDENTIFICAREA BENEFICIILOR PRODUSULUI ȘI SCALARE", description: "<strong>Antreprenoriat:</strong> Crearea și dezvoltarea unei afaceri, identificarea oportunităților.<br><strong>Logistică:</strong> Planificarea, gestionarea și optimizarea fluxurilor de bunuri și servicii.<br><strong>Scalare:</strong> Extinderea afacerii, creșterea volumului vânzărilor, pătrunderea pe piețe noi.<br><strong>Servicii:</strong> Oferirea de servicii populației." },
-                '6': { title: "CREAREA CONFORTULUI ȘI CREATIVITĂȚII", description: "<strong>Cultura corporativă (HR):</strong> Activitate axată pe formarea, dezvoltarea și menținerea valorilor, normelor și atmosferei din interiorul companiei.<br><strong>Crearea confortului:</strong> Procesul de proiectare și optimizare a spațiilor, produselor și proceselor pentru a obține confort maxim (fizic și emoțional)." },
-                '7': { title: "IMPLEMENTAREA RAPIDĂ ȘI PERFECȚIONISTĂ", description: "<strong>Expertiză în implementare rapidă (tehnolog-inovator):</strong> Studiere profundă și implementare rapidă a ideilor, adaptarea proceselor la schimbări.<br><strong>Maestru în producție (măiestrie artizanală):</strong> Dezvoltarea și crearea unor produse unice prin abordare individuală, atenție la detalii și calitate." },
-                '8': { title: "CONTROLUL PROCESELOR ȘI RESURSELOR", description: "<strong>Procese de producție / creative:</strong> Organizarea și gestionarea fabricării produselor, controlul calității, optimizarea operațiunilor.<br><strong>OTK (Control Tehnic):</strong> Detectarea și eliminarea erorilor în faza inițială, reducerea riscurilor.<br><strong>Coordonarea etapelor:</strong> De la idee până la implementare." },
-                '9': { title: "(Informații lipsă)", description: "(Textul pentru profilul profesional 9 va fi adăugat ulterior)." }
-            }
+            ]
         };
 
         const calculateBtn = document.getElementById('calculate-btn');
@@ -206,6 +223,7 @@
         const birthdateInput = document.getElementById('birthdate');
         const resultsSection = document.getElementById('results-section');
         const errorMessage = document.getElementById('error-message');
+        const loader = document.getElementById('loader');
 
         function reduceToSingleDigit(number) {
             let sum = number;
@@ -230,6 +248,25 @@
             return frequencyMap;
         }
 
+        function triggerCalculation() {
+            const birthdateValue = birthdateInput.value;
+            if (!birthdateValue) {
+                errorMessage.textContent = 'Vă rugăm să selectați o dată de naștere.';
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+            errorMessage.classList.add('hidden');
+            loader.classList.remove('hidden');
+            calculateBtn.disabled = true;
+
+            setTimeout(() => {
+                const date = new Date(birthdateValue);
+                displayResults(date);
+                loader.classList.add('hidden');
+                calculateBtn.disabled = false;
+            }, 1500);
+        }
+
         function displayResults(date) {
             const day = date.getDate();
             const dateStringForCalc = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`;
@@ -240,15 +277,45 @@
             document.getElementById('display-date').textContent = date.toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' });
             document.getElementById('cc-result').textContent = consciousness;
             
-            // Section 1: Competencies
+            // Personality
+            const personalityContent = document.getElementById('personality-content');
+            const personalityData = database.personality[consciousness];
+            if (personalityData) {
+                const abilitiesTable = `<table class="w-full mt-4 text-left border-collapse">
+                    <thead><tr><th class="p-2 border-b-2 border-gray-200 bg-gray-50">Abilități Cheie</th></tr></thead>
+                    <tbody>${personalityData.abilities.map(ability => `<tr><td class="p-2 border-b border-gray-200">${ability}</td></tr>`).join('')}</tbody>
+                </table>`;
+                personalityContent.innerHTML = `<h3 class="text-3xl font-bold text-center mb-4 font-display">${consciousness}. ${personalityData.title}</h3>
+                ${abilitiesTable}
+                <div class="mt-4 text-gray-700">${personalityData.text.replace("<h4 class='text-xl font-bold my-2 font-display'>Tip de gândire</h4>", "<h4 class='text-2xl font-bold my-4 font-display text-center'>Tip de gândire</h4>")}</div>`;
+            }
+
+            // Career
+            const careerContent = document.getElementById('career-content');
+            const careerData = database.career[consciousness];
+            if (careerData) {
+                const domainsTable = `<table class="w-full mt-4 text-left border-collapse">
+                    <tbody>
+                        ${careerData.domains.map((domain, index) => (index % 2 === 0) ? `<tr><td class="p-2 border border-gray-200 w-1/2">${domain}</td>` + (careerData.domains[index+1] ? `<td class="p-2 border border-gray-200 w-1/2">${careerData.domains[index+1]}</td></tr>` : `<td class="p-2 border border-gray-200 w-1/2"></td></tr>`) : '').filter(Boolean).join('')}
+                    </tbody>
+                </table>`;
+
+                careerContent.innerHTML = `
+                    <p class="text-sm text-gray-500 text-right">${careerData.workType}</p>
+                    <h4 class="text-xl font-bold mb-2">${careerData.icon} ${consciousness}. ${database.personality[consciousness].title}</h4>
+                    <p class="font-bold">Domenii de Dezvoltare și Profesii Potențiale:</p>
+                    ${domainsTable}
+                `;
+            }
+
+            // Matrix
             const freqContent = document.getElementById('frequency-competencies');
-            const linesContent = document.getElementById('lines-competencies');
+            const linesContainer = document.getElementById('lines-container');
             const matrixGrid = document.getElementById('matrix-grid');
             freqContent.innerHTML = '';
-            linesContent.innerHTML = '';
+            linesContainer.innerHTML = '';
             matrixGrid.innerHTML = '';
 
-            // Visual Matrix
             const matrixLayout = [[3, 6, 9], [2, 5, 8], [1, 4, 7]];
             matrixLayout.flat().forEach(num => {
                 const cell = document.createElement('div');
@@ -261,37 +328,44 @@
                 matrixGrid.appendChild(cell);
             });
 
-            // Lines for Visual Matrix and Text
             let linesHtml = '';
-            database.lines.forEach(line => {
+            let combinationsHtml = '';
+            database.matrixLines.forEach(line => {
                 const isPresent = line.condition.every(digit => frequencyMap[digit] > 0);
-                if (isPresent) {
-                    if (line.cssClass) {
-                        const lineEl = document.createElement('div');
-                        lineEl.className = `line ${line.cssClass}`;
-                        matrixGrid.appendChild(lineEl);
+                if (isPresent && line.text) {
+                    if (line.name.startsWith('Linia')) {
+                        if (line.cssClass) {
+                            const lineEl = document.createElement('div');
+                            lineEl.className = `line ${line.cssClass}`;
+                            matrixGrid.appendChild(lineEl);
+                        }
+                        linesHtml += `<p class="text-gray-700"><strong class="text-[#005F73]">${line.name}:</strong> ${line.text}</p>`;
+                    } else {
+                        combinationsHtml += `<p class="text-gray-700"><strong class="text-[#005F73]">${line.name}:</strong> ${line.text}</p>`;
                     }
-                    const lineText = line.text || database.lines.find(l => l.name === line.name && l.text)?.text;
-                     if(lineText) {
-                        linesHtml += `<p class="text-gray-700"><strong class="text-[#005F73]">${line.name}:</strong> ${lineText}</p>`;
-                     } else {
-                        linesHtml += `<p class="text-gray-700"><strong class="text-[#005F73]">${line.name}</strong></p>`;
-                     }
                 }
             });
-            linesContent.innerHTML = linesHtml || '<p class="text-gray-500">Nu au fost identificate linii sau combinații speciale.</p>';
 
-            // Frequency Text
+            let finalLinesHtml = '';
+            if(linesHtml) {
+                finalLinesHtml += `<h4 class="text-xl font-bold mb-4">Linii Speciale:</h4><div class="space-y-3">${linesHtml}</div>`;
+            }
+            if(combinationsHtml) {
+                finalLinesHtml += `<h4 class="text-xl font-bold mb-4 mt-6">Combinații Speciale:</h4><div class="space-y-3">${combinationsHtml}</div>`;
+            }
+            linesContainer.innerHTML = finalLinesHtml;
+
+
             let freqHtml = '';
             for (const digit in frequencyMap) {
                 const count = frequencyMap[digit];
                 if (count > 0) {
                     let text = '';
-                    if (database.frequency[digit]) {
-                        if (count >= 4 && database.frequency[digit][4]) text = database.frequency[digit][4];
-                        else if (count >= 3 && database.frequency[digit][3]) text = database.frequency[digit][3];
-                        else if (count >= 2 && database.frequency[digit][2]) text = database.frequency[digit][2];
-                        else if (database.frequency[digit][1]) text = database.frequency[digit][1];
+                    if (database.matrixFrequency[digit]) {
+                        if (count >= 4 && database.matrixFrequency[digit][4]) text = database.matrixFrequency[digit][4];
+                        else if (count >= 3 && database.matrixFrequency[digit][3]) text = database.matrixFrequency[digit][3];
+                        else if (count >= 2 && database.matrixFrequency[digit][2]) text = database.matrixFrequency[digit][2];
+                        else if (database.matrixFrequency[digit][1]) text = database.matrixFrequency[digit][1];
                     }
                     if (text) {
                         freqHtml += `<p class="text-gray-700"><strong class="text-[#005F73]">Cifra ${digit} (x${count}):</strong> ${text}</p>`;
@@ -300,46 +374,33 @@
             }
             freqContent.innerHTML = freqHtml || '<p class="text-gray-500">Nu au fost identificate competențe bazate pe frecvență.</p>';
 
-            // Section 2: Thinking Type
-            const thinkingContent = document.getElementById('thinking-type-content');
-            const thinkingData = database.thinkingTypes[consciousness];
-            if (thinkingData) {
-                thinkingContent.innerHTML = `
-                    <p class="text-lg"><strong class="font-bold">Arhetip:</strong> ${thinkingData.arhetip}</p>
-                    <p class="text-lg"><strong class="font-bold">Tip de Gândire:</strong> ${thinkingData.tip}</p>
-                    <p class="mt-4"><strong class="font-bold">Domenii de Dezvoltare a Abilităților:</strong> ${thinkingData.domenii}</p>
-                `;
-            }
-
-            // Section 3: Professional Guidance
-            const profContent = document.getElementById('professional-guidance-content');
-            const profData = database.professions[consciousness];
-            if (profData) {
-                profContent.innerHTML = `
-                    <h4 class="text-xl font-bold mb-2">${profData.title}</h4>
-                    <p class="text-gray-700">${profData.description}</p>
-                `;
-            }
-
             resultsSection.classList.remove('hidden');
-            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            const sections = document.querySelectorAll('.fade-in-section');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            sections.forEach(section => observer.observe(section));
+
+            document.getElementById('personality-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        calculateBtn.addEventListener('click', () => {
-            const birthdateValue = birthdateInput.value;
-            if (!birthdateValue) {
-                errorMessage.textContent = 'Vă rugăm să selectați o dată de naștere.';
-                errorMessage.classList.remove('hidden');
-                return;
+        calculateBtn.addEventListener('click', triggerCalculation);
+        birthdateInput.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                triggerCalculation();
             }
-            errorMessage.classList.add('hidden');
-            const date = new Date(birthdateValue);
-            displayResults(date);
         });
         
         resetBtn.addEventListener('click', () => {
             resultsSection.classList.add('hidden');
             birthdateInput.value = '';
+            const sections = document.querySelectorAll('.fade-in-section');
+            sections.forEach(section => section.classList.remove('is-visible'));
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
